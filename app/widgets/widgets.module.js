@@ -6,6 +6,7 @@
         'rzModule',
         'ui.knob',
         'web.colorpicker',
+        'aCKolor',
         'n3-line-chart'
     ])
     .value('WidgetTypes', [])

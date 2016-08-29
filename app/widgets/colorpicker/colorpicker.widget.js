@@ -3,8 +3,8 @@
 
     angular
         .module('app.widgets')
-        .directive('widgetColorPicker', widgetColorPicker)
-        .controller('WidgetSettingsCtrl-colorpicker', WidgetSettingsCtrlColorPicker)
+        .directive('widgetColorpicker', widgetColorpicker)
+        .controller('WidgetSettingsCtrl-colorpicker', WidgetSettingsCtrlColorpicker)
         .config(function (WidgetsProvider) { 
             WidgetsProvider.$get().registerType({
                 type: 'colorpicker',
@@ -13,15 +13,15 @@
             });
         });
 
-    widgetColorPicker.$inject = ['$rootScope', '$uibModal', 'OHService'];
-    function widgetColorPicker($rootScope, $modal, OHService) {
+    widgetColorpicker.$inject = ['$rootScope', '$uibModal', 'OHService'];
+    function widgetColorpicker($rootScope, $modal, OHService) {
         // Usage: <widget-colorpicker ng-model="widget" />
         //
         // Creates: A colorpicker widget
         //
         var directive = {
             bindToController: true,
-            controller: ColorPickerController,
+            controller: ColorpickerController,
             controllerAs: 'vm',
             link: link,
             restrict: 'AE',
@@ -35,18 +35,34 @@
         function link(scope, element, attrs) {
         }
     }
-    ColorPickerController.$inject = ['$rootScope', '$scope', 'OHService'];
-    function ColorPickerController ($rootScope, $scope, OHService) {
+    ColorpickerController.$inject = ['$rootScope', '$scope', 'OHService'];
+    function ColorpickerController ($rootScope, $scope, OHService) {
         var vm = this;
         this.widget = this.ngModel;
+
+
+        function updateValue() {
+            vm.value = OHService.getItem(vm.widget.item).state;
+            if (vm.value === vm.widget.command) {
+                vm.background = vm.widget.background_active;
+                vm.foreground = vm.widget.foreground_active;
+            } else {
+                vm.background = vm.widget.background;
+                vm.foreground = vm.widget.foreground;
+            }
+        }
+
+        OHService.onUpdate($scope, vm.widget.item, function () {
+            updateValue();
+        });
 
     }
 
 
     // settings dialog
-    WidgetSettingsCtrlColorPicker.$inject = ['$scope', '$timeout', '$rootScope', '$uibModalInstance', 'widget', 'OHService'];
+    WidgetSettingsCtrlColorpicker.$inject = ['$scope', '$timeout', '$rootScope', '$uibModalInstance', 'widget', 'OHService'];
 
-    function WidgetSettingsCtrlColorPicker($scope, $timeout, $rootScope, $modalInstance, widget, OHService) {
+    function WidgetSettingsCtrlColorpicker($scope, $timeout, $rootScope, $modalInstance, widget, OHService) {
         $scope.widget = widget;
         $scope.items = OHService.getItems();
 
